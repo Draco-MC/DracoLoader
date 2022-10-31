@@ -1,6 +1,5 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.7.20"
-    id 'io.github.brassmc.bradle' version '0.6.0'
 }
 
 apply plugin: 'kotlin'
@@ -8,11 +7,6 @@ apply plugin: 'kotlin'
 allprojects {
     group = 'sh.talonfox'
     version = "0.1.0-SNAPSHOT"
-}
-
-configurations {
-    mcServer
-    mcClient
 }
 
 repositories {
@@ -26,9 +20,6 @@ repositories {
 
 dependencies {
     implementation 'commons-io:commons-io:2.11.0'
-
-    mcClient bradle.deobf('net.minecraft:client:1.19.2:joined')
-    mcServer bradle.deobf('net.minecraft:server:1.19.2:joined', 'server')
 
     api('org.spongepowered:mixin:0.8.5')
     api 'org.ow2.asm:asm:9.4'
