@@ -18,7 +18,7 @@ apply plugin: "org.spongepowered.gradle.vanilla"
 apply plugin: 'kotlin'
 
 group = "sh.talonfox"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -79,16 +79,18 @@ minecraft {
 publishing {
     repositories {
         maven {
-            name = "VulpesLoader"
+            name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/VulpesMC/VulpesLoader")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = "Talon396"
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
             }
         }
     }
     publications {
         gpr(MavenPublication) {
+            groupId 'sh.talonfox'
+            artifactId 'vulpesloader'
             from(components.java)
         }
     }
