@@ -22,6 +22,7 @@ import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.IOException
+import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.FileVisitResult
@@ -35,7 +36,7 @@ import java.util.jar.JarFile
 object VulpesModLoader {
     private val MODS_DIRECTORY: File = File(Launch.minecraftHome, "mods")
     var Mods: MutableMap<String, VulpesMod> = mutableMapOf()
-    var ModJars: MutableMap<String, URL> = mutableMapOf()
+    var ModJars: MutableMap<String, URI> = mutableMapOf()
     var Mixins: MutableList<String> = mutableListOf()
 
     fun loadMods() {
@@ -50,7 +51,7 @@ object VulpesModLoader {
                         val jarFile = JarFile(file.toFile())
                         if (jarFile.getEntry("vulpes.json") != null) {
                             val info = Gson().fromJson(IOUtils.toString(jarFile.getInputStream(jarFile.getJarEntry("vulpes.json")), StandardCharsets.UTF_8), VulpesMod::class.java)
-                            info.getID()?.let { ModJars.put(it,file.toUri().toURL()) }
+                            info.getID()?.let { ModJars.put(it,file.toUri()) }
                             Launch.classLoader.addURL(file.toUri().toURL())
                         } else {
                             println("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
