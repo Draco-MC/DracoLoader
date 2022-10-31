@@ -55,6 +55,11 @@ jar {
             if(it.name.startsWith("kotlin") || it.name.startsWith("mixin") || it.name.startsWith("gson") || it.name.startsWith("asm") || it.name.startsWith("launchwrapper") || it.name.startsWith("joptsimple")) {
                 return it.isDirectory() ? it : zipTree(it)
             }
+            if(include_deofuscated_minecraft) {
+                if(it.name.startsWith("joined")) {
+                    return it.isDirectory() ? it : zipTree(it)
+                }
+            }
             return null
         }
     }
