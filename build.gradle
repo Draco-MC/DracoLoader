@@ -4,7 +4,7 @@ plugins {
 
 apply plugin: 'kotlin'
 
-group = 'sh.talonfox'
+group = 'sh.talonfox.vulpesloader'
 version = "0.1.0-SNAPSHOT"
 
 repositories {
