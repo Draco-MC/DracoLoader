@@ -23,7 +23,7 @@ object VulpesEntrypointExecutor {
     @JvmStatic
     fun executeEntrypoint(name: String) {
         if(!name.contains(":") || name.startsWith(":") || name.endsWith(":")) {
-            println("A mod attempted to load an invalid entrypoint named: \"$name\"!")
+            System.err.println("A mod attempted to load an invalid entrypoint named: \"$name\"!")
             return
         }
         VulpesModLoader.Mods.forEach { (id, mod) ->
@@ -41,14 +41,15 @@ object VulpesEntrypointExecutor {
                             }
                         }
                         if(!hasEntrypointInterface) {
-                            println("\"$className\" in Mod \"$name\" doesn't implement IEntrypoint, skipping.")
+                            System.err.println("\"$className\" in mod \"$id\" doesn't implement IEntrypoint, skipping.")
                         } else {
-                            clazz.getMethod("enter").invoke(null,null)
+                            clazz.getMethod("enter").invoke(clazz.getDeclaredConstructor().newInstance())
                         }
                     } catch(e: ClassNotFoundException) {
-                        println("Mod \"$id\" linked entrypoint \"$name\" to non-existent class \"$className\", skipping")
+                        System.err.println("Mod \"$id\" linked entrypoint \"$name\" to non-existent class \"$className\", skipping")
                     } catch(e: NoSuchMethodException) {
-                        println("Mod \"$id\" somehow doesn't have the enter method in class \"$className\" even though interface IEntrypoint requires it?!\n(Potential VulpesLoader Bug!)")
+                        System.err.println("Mod \"$id\" somehow doesn't have the enter method in class \"$className\" even though interface IEntrypoint requires it?!\n(Potential VulpesLoader Bug!)")
+                        e.printStackTrace()
                     }
                 }
             }
