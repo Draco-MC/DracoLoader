@@ -20,6 +20,7 @@ import net.minecraft.launchwrapper.Launch
 import sh.talonfox.vulpesloader.mod.VulpesModLoader
 
 object VulpesEntrypointExecutor {
+    @JvmStatic
     fun executeEntrypoint(name: String) {
         if(!name.contains(":") || name.startsWith(":") || name.endsWith(":")) {
             println("A mod attempted to load an invalid entrypoint named: \"$name\"!")
@@ -34,7 +35,7 @@ object VulpesEntrypointExecutor {
                         val clazz: Class<*> = Launch.classLoader.findClass(className)
                         var hasEntrypointInterface = false
                         for(i in clazz.interfaces.iterator()) {
-                            if(i.name == IEntrypoint::javaClass.name) {
+                            if(i.name == IEntrypoint::class.qualifiedName!!) {
                                 hasEntrypointInterface = true
                                 break
                             }
