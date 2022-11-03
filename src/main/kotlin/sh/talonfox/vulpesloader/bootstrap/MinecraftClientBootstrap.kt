@@ -53,7 +53,7 @@ open class MinecraftClientBootstrap : ITweaker {
             throw RuntimeException(e)
         }
 
-        MixinEnvironment.getDefaultEnvironment().side = MixinEnvironment.Side.CLIENT
+        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
     }
 
     override fun getLaunchTarget(): String = "net.minecraft.client.main.Main"
