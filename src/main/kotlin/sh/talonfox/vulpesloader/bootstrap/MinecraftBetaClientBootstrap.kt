@@ -22,7 +22,7 @@ class MinecraftBetaClientBootstrap : ITweaker {
         MixinEnvironment.getDefaultEnvironment().side = MixinEnvironment.Side.CLIENT
     }
 
-    override fun getLaunchTarget(): String = "net.minecraft.client.MinecraftClient"
+    override fun getLaunchTarget(): String = "net.minecraft.client.MinecraftApplet"
 
     override fun getLaunchArguments(): Array<String> = arrayOf()
 }
