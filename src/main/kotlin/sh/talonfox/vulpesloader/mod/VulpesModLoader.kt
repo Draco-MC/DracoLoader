@@ -17,6 +17,7 @@
 package sh.talonfox.vulpesloader.mod
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import net.minecraft.launchwrapper.Launch
 import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
@@ -50,8 +51,26 @@ object VulpesModLoader {
                     try {
                         val jarFile = JarFile(file.toFile())
                         if (jarFile.getEntry("vulpes.json") != null) {
-                            val info = Gson().fromJson(IOUtils.toString(jarFile.getInputStream(jarFile.getJarEntry("vulpes.json")), StandardCharsets.UTF_8), VulpesMod::class.java)
-                            info.getID()?.let { ModJars.put(it,file.toUri()) }
+                            val info = Gson().fromJson(
+                                IOUtils.toString(
+                                    jarFile.getInputStream(jarFile.getJarEntry("vulpes.json")),
+                                    StandardCharsets.UTF_8
+                                ), VulpesMod::class.java
+                            )
+                            info.getID()?.let { ModJars.put(it, file.toUri()) }
+                            Launch.classLoader.addURL(file.toUri().toURL())
+                        } else if (jarFile.getJarEntry("optifine/OptiFineTweaker.class") != null) {
+                            val modInfo = VulpesMod()
+                            modInfo.setID("optifine")
+                            modInfo.setName("OptiFine")
+                            modInfo.setAuthors("sp614x")
+                            modInfo.setDescription("Provides rendering optimizations to improve Minecraft's performance")
+                            modInfo.setVersion("")
+                            modInfo.setEntrypoints(JsonObject())
+                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineTweaker")
+                            println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
+                            modInfo.getID()?.let { Mods.put(it,modInfo) }
+                            modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
                             Launch.classLoader.addURL(file.toUri().toURL())
                         } else {
                             println("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
@@ -68,7 +87,7 @@ object VulpesModLoader {
             val url = resources.nextElement()
             val modInfo: VulpesMod =
                 Gson().fromJson(IOUtils.toString(url.openStream(), StandardCharsets.UTF_8), VulpesMod::class.java)
-            println("| "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
+            println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
             if (modInfo.getMixin() != null) {
                 Mixins.add(modInfo.getMixin()!!)
             }

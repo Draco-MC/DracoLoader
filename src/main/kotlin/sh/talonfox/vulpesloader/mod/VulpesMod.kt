@@ -40,4 +40,46 @@ class VulpesMod {
     fun getMixin(): String? = mixin
 
     fun getEntrypoints(): JsonObject? = entrypoints
+
+    fun setID(value: String?) {
+        if(id == null) {
+            id = value
+        }
+    }
+
+    fun setName(value: String?) {
+        if(name == null) {
+            name = value
+        }
+    }
+
+    fun setAuthors(value: String?) {
+        if(authors == null) {
+            authors = value
+        }
+    }
+
+    fun setVersion(value: String?) {
+        if(version == null) {
+            version = value
+        }
+    }
+
+    fun setDescription(value: String?) {
+        if(description == null) {
+            description = value
+        }
+    }
+
+    fun setMixin(value: String?) {
+        if(mixin == null) {
+            mixin = value
+        }
+    }
+
+    fun setEntrypoints(value: JsonObject?) {
+        if(entrypoints == null) {
+            entrypoints = value
+        }
+    }
 }
