@@ -17,10 +17,12 @@
 package sh.talonfox.vulpesloader.mod
 
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.minecraft.launchwrapper.Launch
 import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
+import sh.talonfox.vulpesloader.api.VulpesListenerManager
 import java.io.File
 import java.io.IOException
 import java.net.URI
@@ -66,7 +68,7 @@ object VulpesModLoader {
                             modInfo.setAuthors("sp614x")
                             modInfo.setDescription("Provides rendering optimizations to improve Minecraft's performance")
                             modInfo.setVersion("")
-                            modInfo.setEntrypoints(JsonObject())
+                            modInfo.setListeners(JsonArray())
                             (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineTweaker")
                             println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
@@ -92,6 +94,16 @@ object VulpesModLoader {
                 Mixins.add(modInfo.getMixin()!!)
             }
             modInfo.getID()?.let { Mods.put(it,modInfo) }
+            val id = modInfo.getID()
+            for(i in modInfo.getListeners()!!) {
+                val className = i.asString!!
+                try {
+                    val clazz: Class<*> = classLoader.findClass(className)
+                    VulpesListenerManager.addListener(clazz)
+                } catch(e: ClassNotFoundException) {
+                    System.err.println("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
+                }
+            }
         }
     }
 }

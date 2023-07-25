@@ -16,6 +16,7 @@
 
 package sh.talonfox.vulpesloader.mod
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class VulpesMod {
@@ -25,7 +26,7 @@ class VulpesMod {
     private var version: String? = null
     private var description: String? = null
     private var mixin: String? = null
-    private var entrypoints: JsonObject? = null
+    private var listeners: JsonArray? = null
 
     fun getID(): String? = id
 
@@ -39,7 +40,7 @@ class VulpesMod {
 
     fun getMixin(): String? = mixin
 
-    fun getEntrypoints(): JsonObject? = entrypoints
+    fun getListeners(): JsonArray? = listeners
 
     fun setID(value: String?) {
         if(id == null) {
@@ -77,9 +78,9 @@ class VulpesMod {
         }
     }
 
-    fun setEntrypoints(value: JsonObject?) {
-        if(entrypoints == null) {
-            entrypoints = value
+    fun setListeners(value: JsonArray?) {
+        if(listeners == null) {
+            listeners = value
         }
     }
 }
