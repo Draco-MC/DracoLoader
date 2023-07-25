@@ -18,7 +18,6 @@ package sh.talonfox.vulpesloader.mod
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import net.minecraft.launchwrapper.Launch
 import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
@@ -101,7 +100,7 @@ object VulpesModLoader {
                 val className = i.asString!!
                 try {
                     val clazz: Class<*> = classLoader.findClass(className)
-                    VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance() as Class<*>)
+                    VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
                     System.err.println("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
                 }
