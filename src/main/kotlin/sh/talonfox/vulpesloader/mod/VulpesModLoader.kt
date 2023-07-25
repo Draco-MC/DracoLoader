@@ -94,12 +94,14 @@ object VulpesModLoader {
                 Mixins.add(modInfo.getMixin()!!)
             }
             modInfo.getID()?.let { Mods.put(it,modInfo) }
-            val id = modInfo.getID()
-            for(i in modInfo.getListeners()!!) {
+        }
+        for(mod in Mods.values.toList()) {
+            val id = mod.getID()
+            for(i in mod.getListeners()!!) {
                 val className = i.asString!!
                 try {
                     val clazz: Class<*> = classLoader.findClass(className)
-                    VulpesListenerManager.addListener(clazz)
+                    VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance() as Class<*>)
                 } catch(e: ClassNotFoundException) {
                     System.err.println("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
                 }
