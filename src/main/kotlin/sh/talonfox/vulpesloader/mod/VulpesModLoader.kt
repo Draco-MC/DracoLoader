@@ -103,6 +103,7 @@ object VulpesModLoader {
                     VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
                     LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
+                    LOGGER.error("Error reason: $e")
                 }
             }
         }
