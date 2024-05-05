@@ -4,8 +4,11 @@ import org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel
 import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper
 
 
-class LaunchWrapperMixinService : MixinServiceLaunchWrapper() {
-    override fun getMaxCompatibilityLevel(): CompatibilityLevel {
-        return CompatibilityLevel.JAVA_17
+open class LaunchWrapperMixinService : MixinServiceLaunchWrapper() {
+    override fun getMinCompatibilityLevel(): CompatibilityLevel? {
+        return null
+    }
+    override fun getMaxCompatibilityLevel(): CompatibilityLevel? {
+        return null
     }
 }
