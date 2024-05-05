@@ -59,7 +59,7 @@ object VulpesModLoader {
                                 ), VulpesMod::class.java
                             )
                             info.getID()?.let { ModJars.put(it, file.toUri()) }
-                            Launch.classLoader.addURL(file.toUri().toURL())
+                            classLoader.addURL(file.toUri().toURL())
                         } else if (jarFile.getJarEntry("optifine/OptiFineTweaker.class") != null) {
                             val modInfo = VulpesMod()
                             modInfo.setID("optifine")
@@ -72,7 +72,7 @@ object VulpesModLoader {
                             println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
-                            Launch.classLoader.addURL(file.toUri().toURL())
+                            classLoader.addURL(file.toUri().toURL())
                         } else {
                             println("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
                         }

@@ -18,11 +18,14 @@ package sh.talonfox.vulpesloader
 
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.Mixins
+import sh.talonfox.vulpesloader.bootstrap.MixinSourceProvider
 import sh.talonfox.vulpesloader.mod.VulpesModLoader
 
 fun main(args: Array<String>?) {
     println("Vulpes Loader is now starting...")
     VulpesModLoader.loadMods()
     MixinBootstrap.init()
-    VulpesModLoader.Mixins.forEach(Mixins::addConfiguration)
+    VulpesModLoader.Mixins.forEach {
+        Mixins.addConfiguration(it, MixinSourceProvider(it.substringBefore(".json")))
+    }
 }
