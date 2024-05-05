@@ -100,7 +100,7 @@ object VulpesModLoader {
             for(i in mod.getListeners()!!) {
                 val className = i.asString!!
                 try {
-                    val clazz: Class<*> = classLoader.findClass(className)
+                    val clazz: Class<*> = this.javaClass.classLoader.loadClass(className)
                     VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
                     LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
