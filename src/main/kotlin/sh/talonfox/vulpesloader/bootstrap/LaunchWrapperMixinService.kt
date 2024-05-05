@@ -5,10 +5,7 @@ import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper
 
 
 open class LaunchWrapperMixinService : MixinServiceLaunchWrapper() {
-    override fun getMinCompatibilityLevel(): CompatibilityLevel? {
-        return null
-    }
     override fun getMaxCompatibilityLevel(): CompatibilityLevel? {
-        return null
+        return CompatibilityLevel.MAX_SUPPORTED
     }
 }
