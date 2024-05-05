@@ -24,10 +24,10 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
 
     api('org.spongepowered:mixin:0.8.6-SNAPSHOT')
-    implementation 'org.ow2.asm:asm:9.7'
-    implementation 'org.ow2.asm:asm-tree:9.7'
-    implementation 'org.ow2.asm:asm-util:9.7'
-    implementation 'org.ow2.asm:asm-commons:9.7'
+    implementation 'org.ow2.asm:asm:9.5'
+    implementation 'org.ow2.asm:asm-tree:9.5'
+    implementation 'org.ow2.asm:asm-util:9.5'
+    implementation 'org.ow2.asm:asm-commons:9.5'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.github.VulpesMC:LaunchWrapper:master-SNAPSHOT'
