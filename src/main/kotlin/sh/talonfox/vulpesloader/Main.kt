@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.Mixins
-import sh.talonfox.vulpesloader.bootstrap.MixinSourceProvider
 import sh.talonfox.vulpesloader.mod.VulpesModLoader
 
 val LOGGER: Logger = LogManager.getLogger("VulpesLoader")
@@ -29,7 +28,5 @@ fun main(args: Array<String>?) {
     LOGGER.info("Vulpes Loader is now starting...")
     VulpesModLoader.loadMods()
     MixinBootstrap.init()
-    VulpesModLoader.Mixins.forEach {
-        Mixins.addConfiguration(it, MixinSourceProvider(it.substringBefore(".json")))
-    }
+    VulpesModLoader.Mixins.forEach(Mixins::addConfiguration)
 }

@@ -19,7 +19,6 @@ package sh.talonfox.vulpesloader.mod
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import net.minecraft.launchwrapper.Launch
-import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
 import sh.talonfox.vulpesloader.LOGGER
 import sh.talonfox.vulpesloader.api.VulpesListenerManager
@@ -60,7 +59,7 @@ object VulpesModLoader {
                                 ), VulpesMod::class.java
                             )
                             info.getID()?.let { ModJars.put(it, file.toUri()) }
-                            classLoader.addURL(file.toUri().toURL())
+                            Launch.classLoader.addURL(file.toUri().toURL())
                         } else if (jarFile.getJarEntry("optifine/OptiFineTweaker.class") != null) {
                             val modInfo = VulpesMod()
                             modInfo.setID("optifine")
@@ -73,7 +72,7 @@ object VulpesModLoader {
                             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
-                            classLoader.addURL(file.toUri().toURL())
+                            Launch.classLoader.addURL(file.toUri().toURL())
                         } else {
                             LOGGER.error("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
                         }
@@ -84,7 +83,7 @@ object VulpesModLoader {
                 return super.visitFile(file, attrs);
             }
         })
-        val resources: Enumeration<URL> = classLoader.getResources("vulpes.json")
+        val resources: Enumeration<URL> = Launch.classLoader.getResources("vulpes.json")
         while(resources.hasMoreElements()) {
             val url = resources.nextElement()
             val modInfo: VulpesMod =
@@ -100,7 +99,7 @@ object VulpesModLoader {
             for(i in mod.getListeners()!!) {
                 val className = i.asString!!
                 try {
-                    val clazz: Class<*> = this.javaClass.classLoader.loadClass(className)
+                    val clazz: Class<*> = Launch.classLoader.findClass(className)
                     VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
                     LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
