@@ -21,6 +21,7 @@ import com.google.gson.JsonArray
 import net.minecraft.launchwrapper.Launch
 import net.minecraft.launchwrapper.Launch.classLoader
 import org.apache.commons.io.IOUtils
+import sh.talonfox.vulpesloader.LOGGER
 import sh.talonfox.vulpesloader.api.VulpesListenerManager
 import java.io.File
 import java.io.IOException
@@ -42,7 +43,7 @@ object VulpesModLoader {
     var Mixins: MutableList<String> = mutableListOf()
 
     fun loadMods() {
-        println("Attempting to discover Vulpes-compatible mods...")
+        LOGGER.info("Attempting to discover Vulpes-compatible mods...")
         MODS_DIRECTORY.mkdir()
         var foundModYet = false
         Files.walkFileTree(MODS_DIRECTORY.toPath(), object : SimpleFileVisitor<Path>() {
@@ -69,15 +70,15 @@ object VulpesModLoader {
                             modInfo.setVersion("")
                             modInfo.setListeners(JsonArray())
                             (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineTweaker")
-                            println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
+                            LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
                             classLoader.addURL(file.toUri().toURL())
                         } else {
-                            println("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
+                            LOGGER.error("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
                         }
                     } catch (throwable: Throwable) {
-                        println("An exception occurred while loading mod \""+file.toFile().nameWithoutExtension+"\"\n"+throwable.toString())
+                        LOGGER.error("An exception occurred while loading mod \""+file.toFile().nameWithoutExtension+"\"\n"+throwable.toString())
                     }
                 }
                 return super.visitFile(file, attrs);
@@ -88,7 +89,7 @@ object VulpesModLoader {
             val url = resources.nextElement()
             val modInfo: VulpesMod =
                 Gson().fromJson(IOUtils.toString(url.openStream(), StandardCharsets.UTF_8), VulpesMod::class.java)
-            println("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
+            LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
             if (modInfo.getMixin() != null) {
                 Mixins.add(modInfo.getMixin()!!)
             }
@@ -102,7 +103,7 @@ object VulpesModLoader {
                     val clazz: Class<*> = classLoader.findClass(className)
                     VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
-                    System.err.println("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
+                    LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
                 }
             }
         }
