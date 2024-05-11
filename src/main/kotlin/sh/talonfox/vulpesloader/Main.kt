@@ -16,6 +16,7 @@
 
 package sh.talonfox.vulpesloader
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.asm.launch.MixinBootstrap
@@ -28,5 +29,6 @@ fun main(args: Array<String>?) {
     LOGGER.info("Vulpes Loader is now starting...")
     VulpesModLoader.loadMods()
     MixinBootstrap.init()
+    MixinExtrasBootstrap.init()
     VulpesModLoader.Mixins.forEach(Mixins::addConfiguration)
 }
