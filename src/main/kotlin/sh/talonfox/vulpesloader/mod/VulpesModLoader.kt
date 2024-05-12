@@ -18,7 +18,9 @@ package sh.talonfox.vulpesloader.mod
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import net.minecraft.launchwrapper.ITweaker
 import net.minecraft.launchwrapper.Launch
+import net.minecraft.launchwrapper.LaunchClassLoader
 import org.apache.commons.io.IOUtils
 import sh.talonfox.vulpesloader.LOGGER
 import sh.talonfox.vulpesloader.api.VulpesListenerManager
@@ -34,6 +36,7 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.jar.JarFile
+
 
 object VulpesModLoader {
     private val MODS_DIRECTORY: File = File(Launch.minecraftHome, "mods")
@@ -68,7 +71,8 @@ object VulpesModLoader {
                             modInfo.setDescription("Provides rendering optimizations to improve Minecraft's performance")
                             modInfo.setVersion("")
                             modInfo.setListeners(JsonArray())
-                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineForgeTweaker")
+                            Launch.classLoader.addClassLoaderExclusion("optifine.");
+                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("sh.talonfox.vulpesloader.mod.VulpesModLoader.OptifineTweaker")
                             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
@@ -106,6 +110,22 @@ object VulpesModLoader {
                     LOGGER.error("Error reason: $e")
                 }
             }
+        }
+    }
+
+
+    class OptifineTweaker : ITweaker {
+        override fun acceptOptions(args: List<String>, gameDir: File, assetsDir: File, profile: String) {}
+        override fun injectIntoClassLoader(classLoader: LaunchClassLoader) {
+            classLoader.registerTransformer("optifine.OptiFineClassTransformer")
+        }
+
+        override fun getLaunchTarget(): String? {
+            return null
+        }
+
+        override fun getLaunchArguments(): Array<String?> {
+            return arrayOfNulls(0)
         }
     }
 }
