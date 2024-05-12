@@ -72,7 +72,7 @@ object VulpesModLoader {
                             modInfo.setVersion("")
                             modInfo.setListeners(JsonArray())
                             Launch.classLoader.addClassLoaderExclusion("optifine.");
-                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("sh.talonfox.vulpesloader.mod.VulpesModLoader.OptifineTweaker")
+                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("sh.talonfox.vulpesloader.mod.VulpesModLoader\$OptifineTweaker")
                             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
