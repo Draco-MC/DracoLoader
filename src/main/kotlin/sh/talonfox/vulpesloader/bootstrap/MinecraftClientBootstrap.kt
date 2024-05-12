@@ -17,6 +17,7 @@
 package sh.talonfox.vulpesloader.bootstrap
 
 import net.minecraft.launchwrapper.ITweaker
+import net.minecraft.launchwrapper.Launch
 import net.minecraft.launchwrapper.LaunchClassLoader
 import org.spongepowered.asm.mixin.MixinEnvironment
 import java.io.File
