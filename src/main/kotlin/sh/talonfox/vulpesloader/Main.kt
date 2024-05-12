@@ -30,5 +30,5 @@ fun main(args: Array<String>?) {
     VulpesModLoader.loadMods()
     MixinBootstrap.init()
     MixinExtrasBootstrap.init()
-    VulpesModLoader.Mixins.forEach(Mixins::addConfiguration)
+    VulpesModLoader.MIXINS.forEach(Mixins::addConfiguration)
 }
