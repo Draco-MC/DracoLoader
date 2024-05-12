@@ -60,7 +60,7 @@ object VulpesModLoader {
                             )
                             info.getID()?.let { ModJars.put(it, file.toUri()) }
                             Launch.classLoader.addURL(file.toUri().toURL())
-                        } else if (jarFile.getJarEntry("optifine/OptiFineTweaker.class") != null) {
+                        } else if (jarFile.getJarEntry("optifine/OptiFineForgeTweaker.class") != null) {
                             val modInfo = VulpesMod()
                             modInfo.setID("optifine")
                             modInfo.setName("OptiFine")
@@ -68,7 +68,7 @@ object VulpesModLoader {
                             modInfo.setDescription("Provides rendering optimizations to improve Minecraft's performance")
                             modInfo.setVersion("")
                             modInfo.setListeners(JsonArray())
-                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineTweaker")
+                            (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("optifine.OptiFineForgeTweaker")
                             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
                             modInfo.getID()?.let { ModJars.put(it, file.toUri()) }
