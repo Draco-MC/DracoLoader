@@ -18,9 +18,7 @@ package sh.talonfox.vulpesloader.mod
 
 import com.google.gson.Gson
 import com.google.gson.JsonArray
-import net.minecraft.launchwrapper.ITweaker
-import net.minecraft.launchwrapper.Launch
-import net.minecraft.launchwrapper.LaunchClassLoader
+import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import sh.talonfox.vulpesloader.LOGGER
 import sh.talonfox.vulpesloader.api.VulpesListenerManager
@@ -71,7 +69,6 @@ object VulpesModLoader {
                             modInfo.setDescription("Provides rendering optimizations to improve Minecraft's performance")
                             modInfo.setVersion("")
                             modInfo.setListeners(JsonArray())
-                            Launch.classLoader.addClassLoaderExclusion("optifine.");
                             (Launch.blackboard["TweakClasses"] as MutableList<String?>?)!!.add("sh.talonfox.vulpesloader.mod.VulpesModLoader\$OptifineTweaker")
                             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
                             modInfo.getID()?.let { Mods.put(it,modInfo) }
@@ -117,7 +114,7 @@ object VulpesModLoader {
     class OptifineTweaker : ITweaker {
         override fun acceptOptions(args: List<String>, gameDir: File, assetsDir: File, profile: String) {}
         override fun injectIntoClassLoader(classLoader: LaunchClassLoader) {
-            classLoader.registerTransformer("optifine.OptiFineClassTransformer")
+            classLoader.registerTransformer("sh.talonfox.vulpesloader.mod.VulpesModLoader\$OptifineTransformer")
         }
 
         override fun getLaunchTarget(): String? {
@@ -127,5 +124,16 @@ object VulpesModLoader {
         override fun getLaunchArguments(): Array<String?> {
             return arrayOfNulls(0)
         }
+    }
+
+    class OptifineTransformer : IClassTransformer {
+        override fun transform(name: String, transformedName: String, basicClass: ByteArray?): ByteArray? {
+            val s = Launch.classLoader.getResourceAsStream("notch/"+name.replace(".","/").plus(".class"))
+            if(s != null) {
+                return s.readBytes()
+            }
+            return basicClass
+        }
+
     }
 }
