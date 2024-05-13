@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.Mixins
+import sh.talonfox.vulpesloader.mod.VulpesMixinConfigSource
 import sh.talonfox.vulpesloader.mod.VulpesModLoader
 
 val LOGGER: Logger = LogManager.getLogger("VulpesLoader")
@@ -30,5 +31,8 @@ fun main(args: Array<String>?) {
     VulpesModLoader.loadMods()
     MixinBootstrap.init()
     MixinExtrasBootstrap.init()
-    VulpesModLoader.MIXINS.forEach(Mixins::addConfiguration)
+    VulpesModLoader.MIXINS.forEach {
+        Mixins.addConfiguration(it, VulpesMixinConfigSource(it))
+    }
+
 }
