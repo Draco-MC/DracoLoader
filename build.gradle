@@ -25,10 +25,10 @@ dependencies {
 
     api('org.spongepowered:mixin:0.8.6')
     api ("io.github.llamalad7:mixinextras-common:0.3.5")
-    api 'org.ow2.asm:asm:9.5'
-    api 'org.ow2.asm:asm-tree:9.5'
-    api 'org.ow2.asm:asm-util:9.5'
-    api 'org.ow2.asm:asm-commons:9.5'
+    api 'org.ow2.asm:asm:9.7'
+    api 'org.ow2.asm:asm-tree:9.7'
+    api 'org.ow2.asm:asm-util:9.7'
+    api 'org.ow2.asm:asm-commons:9.7'
     api "net.fabricmc:mapping-io:0.6.1"
     api "net.fabricmc:mapping-io-extras:0.6.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
