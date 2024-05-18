@@ -9,10 +9,7 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        maven {
-            url 'https://repo.repsy.io/mvn/brassmc/public'
-        }
     }
 }
 
-rootProject.name = 'VulpesLoader'
+rootProject.name = 'DracoLoader'
