@@ -14,42 +14,31 @@
  * limitations under the License.
  */
 
-package sh.talonfox.vulpesloader.bootstrap
+package sh.talonfloof.dracoloader.bootstrap
 
 import net.minecraft.launchwrapper.ITweaker
 import net.minecraft.launchwrapper.LaunchClassLoader
 import org.spongepowered.asm.mixin.MixinEnvironment
 import java.io.File
 
-open class MinecraftServerBootstrap : ITweaker {
-    private var Args: ArrayList<String>? = null
-
-    private fun addArg(name: String, value: String?) {
-        Args!!.add(name)
-        if (value != null) {
-            Args!!.add(value)
-        }
-    }
-
+class MinecraftBetaClientBootstrap : ITweaker {
     override fun acceptOptions(args: MutableList<String>?, gameDir: File?, assetsDir: File?, profile: String?) {
-        this.Args = args?.let { ArrayList(it) }
+
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
         try {
-            val clazz: Class<*> = classLoader!!.findClass("sh.talonfox.vulpesloader.MainKt")
+            val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)
-                .invoke(null, Args?.toTypedArray())
+                .invoke(null, arrayOf<String>())
         } catch (e: ReflectiveOperationException) {
             throw RuntimeException(e)
         }
 
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.SERVER
+        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
     }
 
-    override fun getLaunchTarget(): String = "net.minecraft.server.Main"
+    override fun getLaunchTarget(): String = "net.minecraft.client.MinecraftApplet"
 
-    override fun getLaunchArguments(): Array<String>? {
-        return Args?.toTypedArray()
-    }
+    override fun getLaunchArguments(): Array<String> = arrayOf()
 }

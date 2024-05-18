@@ -1,8 +1,8 @@
-package sh.talonfox.vulpesloader.mod
+package sh.talonfloof.dracoloader.mod
 
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigSource
 
-class VulpesMixinConfigSource(private val modID: String) : IMixinConfigSource {
+class DracoMixinConfigSource(private val modID: String) : IMixinConfigSource {
     override fun getId(): String {
         return modID
     }

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package sh.talonfox.vulpesloader
+package sh.talonfloof.dracoloader
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.Mixins
-import sh.talonfox.vulpesloader.mod.VulpesMixinConfigSource
-import sh.talonfox.vulpesloader.mod.VulpesModLoader
+import sh.talonfloof.dracoloader.mod.DracoMixinConfigSource
+import sh.talonfloof.dracoloader.mod.DracoModLoader
 
-val LOGGER: Logger = LogManager.getLogger("VulpesLoader")
+val LOGGER: Logger = LogManager.getLogger("DracoLoader")
 
 fun main(args: Array<String>?) {
-    LOGGER.info("Vulpes Loader is now starting...")
-    VulpesModLoader.loadMods()
+    LOGGER.info("Draco Loader is now starting...")
+    DracoModLoader.loadMods()
     MixinBootstrap.init()
     MixinExtrasBootstrap.init()
-    VulpesModLoader.MIXINS.forEach {
-        Mixins.addConfiguration(it, VulpesMixinConfigSource(it))
+    DracoModLoader.MIXINS.forEach {
+        Mixins.addConfiguration(it, DracoMixinConfigSource(it))
     }
 
 }

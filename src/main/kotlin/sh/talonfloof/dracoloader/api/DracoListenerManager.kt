@@ -1,9 +1,7 @@
-package sh.talonfox.vulpesloader.api
-
-import net.minecraft.launchwrapper.Launch
+package sh.talonfloof.dracoloader.api
 
 
-object VulpesListenerManager {
+object DracoListenerManager {
     private var listeners: HashMap<Class<*>, MutableList<Any>> = HashMap()
 
     @JvmStatic

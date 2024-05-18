@@ -1,4 +1,4 @@
-package sh.talonfox.vulpesloader.bootstrap
+package sh.talonfloof.dracoloader.bootstrap
 
 import org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel
 import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper

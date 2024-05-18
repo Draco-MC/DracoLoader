@@ -1,27 +1,11 @@
-/*
- * Copyright 2022 Vulpes
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package sh.talonfox.vulpesloader.mod
+package sh.talonfloof.dracoloader.mod
 
 import com.google.gson.Gson
 import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
-import sh.talonfox.vulpesloader.LOGGER
-import sh.talonfox.vulpesloader.api.VulpesListenerManager
+import sh.talonfloof.dracoloader.LOGGER
+import sh.talonfloof.dracoloader.api.DracoListenerManager
 import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
@@ -38,14 +22,14 @@ import java.util.jar.JarFile
 import kotlin.io.path.toPath
 
 
-object VulpesModLoader {
+object DracoModLoader {
     private val MODS_DIRECTORY: File = File(Launch.minecraftHome, "mods")
-    var MODS: MutableMap<String, VulpesMod> = mutableMapOf()
+    var MODS: MutableMap<String, DracoMod> = mutableMapOf()
     var MOD_PATHS: MutableMap<String, URI> = mutableMapOf()
     var MIXINS: MutableList<String> = mutableListOf()
 
     fun loadMods() {
-        LOGGER.info("Attempting to discover Vulpes-compatible mods...")
+        LOGGER.info("Attempting to discover Dragon-compatible mods...")
         MODS_DIRECTORY.mkdir()
         var foundModYet = false
         Files.walkFileTree(MODS_DIRECTORY.toPath(), object : SimpleFileVisitor<Path>() {
@@ -54,7 +38,7 @@ object VulpesModLoader {
                 if(file.toFile().name.endsWith(".jar")) {
                     try {
                         val jarFile = JarFile(file.toFile())
-                        if (jarFile.getEntry("vulpes.json") != null) {
+                        if (jarFile.getEntry("draco.json") != null) {
                             /*val info = Gson().fromJson(
                                 IOUtils.toString(
                                     jarFile.getInputStream(jarFile.getJarEntry("vulpes.json")),
@@ -73,11 +57,11 @@ object VulpesModLoader {
                 return super.visitFile(file, attrs);
             }
         })
-        val resources: Enumeration<URL> = Launch.classLoader.getResources("vulpes.json")
+        val resources: Enumeration<URL> = Launch.classLoader.getResources("draco.json")
         while(resources.hasMoreElements()) {
             var url = resources.nextElement()
-            val modInfo: VulpesMod =
-                Gson().fromJson(IOUtils.toString(url.openStream(), StandardCharsets.UTF_8), VulpesMod::class.java)
+            val modInfo: DracoMod =
+                Gson().fromJson(IOUtils.toString(url.openStream(), StandardCharsets.UTF_8), DracoMod::class.java)
             LOGGER.info("| "+modInfo.getID()+" | "+modInfo.getName()+" | "+modInfo.getAuthors()+" | "+modInfo.getVersion()+" |")
             if (modInfo.getMixin() != null) {
                 MIXINS.add(modInfo.getMixin()!!)
@@ -107,7 +91,7 @@ object VulpesModLoader {
                 val className = i.asString!!
                 try {
                     val clazz: Class<*> = Launch.classLoader.findClass(className)
-                    VulpesListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
+                    DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
                 } catch(e: ClassNotFoundException) {
                     LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
                     LOGGER.error("Error reason: $e")
