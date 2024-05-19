@@ -88,11 +88,11 @@ object DracoModLoader {
                 }
             }
         }
+        MixinBootstrap.init()
+        MixinExtrasBootstrap.init()
         MIXINS.forEach {
             Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
-        MixinBootstrap.init()
-        MixinExtrasBootstrap.init()
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
             for(i in mod.getListeners()!!) {
