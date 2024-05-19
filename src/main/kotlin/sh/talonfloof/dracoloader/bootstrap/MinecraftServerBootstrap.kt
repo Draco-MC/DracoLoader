@@ -36,6 +36,7 @@ open class MinecraftServerBootstrap : ITweaker {
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
+        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.SERVER
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)
@@ -43,8 +44,6 @@ open class MinecraftServerBootstrap : ITweaker {
         } catch (e: ReflectiveOperationException) {
             throw RuntimeException(e)
         }
-
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.SERVER
     }
 
     override fun getLaunchTarget(): String = "net.minecraft.server.Main"

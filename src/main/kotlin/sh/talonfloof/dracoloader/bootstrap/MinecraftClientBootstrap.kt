@@ -29,6 +29,7 @@ open class MinecraftClientBootstrap : ITweaker {
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
+        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)
@@ -36,8 +37,6 @@ open class MinecraftClientBootstrap : ITweaker {
         } catch (e: ReflectiveOperationException) {
             throw RuntimeException(e)
         }
-
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
     }
 
     override fun getLaunchTarget(): String = "net.minecraft.client.main.Main"
