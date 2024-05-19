@@ -8,4 +8,8 @@ open class LaunchWrapperMixinService : MixinServiceLaunchWrapper() {
     override fun getMaxCompatibilityLevel(): CompatibilityLevel? {
         return CompatibilityLevel.JAVA_17
     }
+
+    override fun getPlatformAgents(): Collection<String> {
+        return listOf("sh.talonfloof.dracoloader.bootstrap.DracoMixinPlatformAgent")
+    }
 }

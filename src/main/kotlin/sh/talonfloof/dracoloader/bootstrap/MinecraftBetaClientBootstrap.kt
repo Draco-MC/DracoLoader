@@ -23,11 +23,10 @@ import java.io.File
 
 class MinecraftBetaClientBootstrap : ITweaker {
     override fun acceptOptions(args: MutableList<String>?, gameDir: File?, assetsDir: File?, profile: String?) {
-
+        args?.add("--client")
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)

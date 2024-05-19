@@ -26,10 +26,10 @@ open class MinecraftClientBootstrap : ITweaker {
         if(!this.Args!!.contains("--accessToken")) {
             addArg("--accessToken", "0")
         }
+        addArg("--client",null)
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.CLIENT
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)

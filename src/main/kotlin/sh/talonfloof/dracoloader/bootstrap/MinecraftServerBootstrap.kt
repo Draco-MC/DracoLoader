@@ -33,6 +33,7 @@ open class MinecraftServerBootstrap : ITweaker {
 
     override fun acceptOptions(args: MutableList<String>?, gameDir: File?, assetsDir: File?, profile: String?) {
         this.Args = args?.let { ArrayList(it) }
+        addArg("--server",null)
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
