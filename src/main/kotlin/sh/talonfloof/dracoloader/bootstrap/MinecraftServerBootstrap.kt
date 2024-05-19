@@ -19,6 +19,7 @@ package sh.talonfloof.dracoloader.bootstrap
 import net.minecraft.launchwrapper.ITweaker
 import net.minecraft.launchwrapper.LaunchClassLoader
 import org.spongepowered.asm.mixin.MixinEnvironment
+import sh.talonfloof.dracoloader.isServer
 import java.io.File
 
 open class MinecraftServerBootstrap : ITweaker {
@@ -33,11 +34,10 @@ open class MinecraftServerBootstrap : ITweaker {
 
     override fun acceptOptions(args: MutableList<String>?, gameDir: File?, assetsDir: File?, profile: String?) {
         this.Args = args?.let { ArrayList(it) }
-        addArg("--server",null)
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
-        MixinEnvironment.getCurrentEnvironment().side = MixinEnvironment.Side.SERVER
+        isServer = true
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)

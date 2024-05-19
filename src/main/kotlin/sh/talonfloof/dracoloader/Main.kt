@@ -28,10 +28,6 @@ val LOGGER: Logger = LogManager.getLogger("DracoLoader")
 var isServer: Boolean = false
 
 fun main(args: Array<String>?) {
-    if (args != null) {
-        if(args.contains("--server"))
-            isServer = true
-    }
     LOGGER.info("Draco Loader is now starting...")
     DracoModLoader.loadMods()
 }

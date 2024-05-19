@@ -12,6 +12,7 @@ class DracoMixinPlatformAgent : MixinPlatformAgentDefault(), IMixinPlatformServi
     }
 
     override fun getSideName() : String {
+        println(isServer)
         if(isServer) {
             return "SERVER"
         } else {

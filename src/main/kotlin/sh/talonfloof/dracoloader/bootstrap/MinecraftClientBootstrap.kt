@@ -3,6 +3,7 @@ package sh.talonfloof.dracoloader.bootstrap
 import net.minecraft.launchwrapper.ITweaker
 import net.minecraft.launchwrapper.LaunchClassLoader
 import org.spongepowered.asm.mixin.MixinEnvironment
+import sh.talonfloof.dracoloader.isServer
 import java.io.File
 
 
@@ -26,10 +27,10 @@ open class MinecraftClientBootstrap : ITweaker {
         if(!this.Args!!.contains("--accessToken")) {
             addArg("--accessToken", "0")
         }
-        addArg("--client",null)
     }
 
     override fun injectIntoClassLoader(classLoader: LaunchClassLoader?) {
+        isServer = false
         try {
             val clazz: Class<*> = classLoader!!.findClass("sh.talonfloof.dracoloader.MainKt")
             clazz.getMethod("main", Array<String>::class.java)
