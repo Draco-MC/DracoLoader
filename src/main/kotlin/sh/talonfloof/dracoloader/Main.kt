@@ -29,10 +29,4 @@ val LOGGER: Logger = LogManager.getLogger("DracoLoader")
 fun main(args: Array<String>?) {
     LOGGER.info("Draco Loader is now starting...")
     DracoModLoader.loadMods()
-    MixinBootstrap.init()
-    MixinExtrasBootstrap.init()
-    DracoModLoader.MIXINS.forEach {
-        Mixins.addConfiguration(it, DracoMixinConfigSource(it))
-    }
-
 }

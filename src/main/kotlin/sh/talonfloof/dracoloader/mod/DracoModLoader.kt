@@ -1,9 +1,12 @@
 package sh.talonfloof.dracoloader.mod
 
 import com.google.gson.Gson
+import com.llamalad7.mixinextras.MixinExtrasBootstrap
 import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
+import org.spongepowered.asm.launch.MixinBootstrap
+import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
 import java.io.File
@@ -85,6 +88,11 @@ object DracoModLoader {
                 }
             }
         }
+        MIXINS.forEach {
+            Mixins.addConfiguration(it, DracoMixinConfigSource(it))
+        }
+        MixinBootstrap.init()
+        MixinExtrasBootstrap.init()
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
             for(i in mod.getListeners()!!) {
