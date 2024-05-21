@@ -2,6 +2,9 @@
 
 The DracoLoader is the core of Draco, it is responsible for loading mods and providing a backend for SpongePowered's Mixins. It is built to be version independent and can run with Java version 8 or higher (though 17 or higher is recommended), and will work from late beta versions of Minecraft all the way up to the latest snapshots.
 
+> [!Warning]
+> DracoLoader and the DracoStandardLibrary are not stable yet, things are still subject to change as the mod loader and its APIs continue to expand and grow over time, expect changes or bugs to occur
+
 ## How does it work?
 
 ### LaunchWrapper
