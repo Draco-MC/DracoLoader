@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id "org.jetbrains.kotlin.jvm" version "1.7.20"
+    id "org.jetbrains.kotlin.jvm" version "1.9.20"
 }
 
 sourceCompatibility = '1.8'
@@ -23,48 +25,45 @@ repositories {
 dependencies {
     implementation 'commons-io:commons-io:2.11.0'
 
+    implementation "com.formdev:flatlaf:3.4.1"
     api('org.spongepowered:mixin:0.8.6')
     api ("io.github.llamalad7:mixinextras-common:0.3.5")
-    api 'org.ow2.asm:asm:9.7'
-    api 'org.ow2.asm:asm-tree:9.7'
-    api 'org.ow2.asm:asm-util:9.7'
-    api 'org.ow2.asm:asm-commons:9.7'
-    api "net.fabricmc:mapping-io:0.6.1"
-    api "net.fabricmc:mapping-io-extras:0.6.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
+    implementation 'org.ow2.asm:asm:9.7'
+    implementation 'org.ow2.asm:asm-tree:9.7'
+    implementation 'org.ow2.asm:asm-util:9.7'
+    implementation 'org.ow2.asm:asm-commons:9.7'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20"
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.github.Draco-MC:LaunchWrapper:master-SNAPSHOT'
 }
 
 shadowJar {
-    minimize {
+    dependencies {
         exclude(dependency('commons-io:commons-io'))
-        exclude('LICENSE.txt')
-        exclude('META-INF/LICENSE.txt')
-        exclude("META-INF/LICENSE")
-        exclude('META-INF/NOTICE')
-        exclude('META-INF/NOTICE.txt')
-        exclude('META-INF/DEPENDENCIES')
+        include(dependency("com.formdev:flatlaf"))
+        include(dependency("org.spongepowered:mixin"))
+        include(dependency("io.github.llamalad7:mixinextras-common"))
+        include(dependency('org.ow2.asm:asm'))
+        include(dependency('org.ow2.asm:asm-tree'))
+        include(dependency('org.ow2.asm:asm-util'))
+        include(dependency('org.ow2.asm:asm-commons'))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
+        include(dependency('com.google.code.gson:gson'))
+        include(dependency('com.github.Draco-MC:LaunchWrapper'))
+    }
+
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
 
 jar {
-    //duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
     manifest {
         attributes(
                 'Main-Class': "net.minecraft.launchwrapper.Launch"
         )
     }
-
-    /*from {
-        configurations.runtimeClasspath.collect {
-            if(it.name.startsWith("kotlin") || it.name.startsWith("mixin") || it.name.startsWith("gson") || it.name.startsWith("asm") || it.name.startsWith("launchwrapper") || it.name.startsWith("joptsimple")) {
-                return it.isDirectory() ? it : zipTree(it)
-            }
-            return null
-        }
-    }
-    exclude("META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA", "LICENSE.txt", "module-info.class", "log4j2.xml")*/
 }
-

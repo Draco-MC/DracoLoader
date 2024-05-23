@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
 import sh.talonfloof.dracoloader.isServer
+import sh.talonfloof.dracoloader.transform.IDracoTransformer
 import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
@@ -34,7 +35,7 @@ object DracoModLoader {
     var MIXINS: MutableList<String> = mutableListOf()
 
     fun loadMods() {
-        LOGGER.info("Attempting to discover Dragon-compatible mods...")
+        LOGGER.info("Attempting to discover Draco-compatible mods...")
         MODS_DIRECTORY.mkdir()
         var foundModYet = false
         Files.walkFileTree(MODS_DIRECTORY.toPath(), object : SimpleFileVisitor<Path>() {

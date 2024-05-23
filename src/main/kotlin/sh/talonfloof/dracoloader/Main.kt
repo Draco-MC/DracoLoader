@@ -16,13 +16,19 @@
 
 package sh.talonfloof.dracoloader
 
+import com.formdev.flatlaf.FlatDarculaLaf
 import com.llamalad7.mixinextras.MixinExtrasBootstrap
+import net.minecraft.launchwrapper.Launch
+import net.minecraft.launchwrapper.LaunchClassLoader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.mod.DracoMixinConfigSource
 import sh.talonfloof.dracoloader.mod.DracoModLoader
+import java.awt.GraphicsEnvironment
+import javax.swing.JDialog
+import javax.swing.JFrame
 
 val LOGGER: Logger = LogManager.getLogger("DracoLoader")
 var isServer: Boolean = false
