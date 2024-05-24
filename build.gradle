@@ -40,6 +40,7 @@ dependencies {
 shadowJar {
     dependencies {
         exclude(dependency('commons-io:commons-io'))
+        exclude(dependency('com.github.Draco-MC:LaunchWrapper'))
         include(dependency("com.formdev:flatlaf"))
         include(dependency("org.spongepowered:mixin"))
         include(dependency("io.github.llamalad7:mixinextras-common"))
@@ -49,7 +50,6 @@ shadowJar {
         include(dependency('org.ow2.asm:asm-commons'))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         include(dependency('com.google.code.gson:gson'))
-        include(dependency('com.github.Draco-MC:LaunchWrapper'))
     }
 
 }
