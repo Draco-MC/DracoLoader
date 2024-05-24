@@ -49,7 +49,7 @@ shadowJar {
         include(dependency('org.ow2.asm:asm-tree'))
         include(dependency('org.ow2.asm:asm-util'))
         include(dependency('org.ow2.asm:asm-commons'))
-        include(dependency('org.ow2.asm:asm-analysis:9.7'))
+        include(dependency('org.ow2.asm:asm-analysis'))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
