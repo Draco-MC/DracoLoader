@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.ow2.asm:asm-tree:9.7'
     implementation 'org.ow2.asm:asm-util:9.7'
     implementation 'org.ow2.asm:asm-commons:9.7'
+    implementation 'org.ow2.asm:asm-analysis:9.7'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20"
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.github.Draco-MC:LaunchWrapper:master-SNAPSHOT'
@@ -48,6 +49,7 @@ shadowJar {
         include(dependency('org.ow2.asm:asm-tree'))
         include(dependency('org.ow2.asm:asm-util'))
         include(dependency('org.ow2.asm:asm-commons'))
+        include(dependency('org.ow2.asm:asm-analysis:9.7'))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
