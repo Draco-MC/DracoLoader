@@ -48,6 +48,8 @@ shadowJar {
         include(dependency('org.ow2.asm:asm-tree'))
         include(dependency('org.ow2.asm:asm-util'))
         include(dependency('org.ow2.asm:asm-commons'))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
+        include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         include(dependency('com.google.code.gson:gson'))
     }
