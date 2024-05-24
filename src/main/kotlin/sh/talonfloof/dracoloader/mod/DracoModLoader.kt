@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
 import sh.talonfloof.dracoloader.isServer
+import sh.talonfloof.dracoloader.transform.DracoTransformerRegistry
 import sh.talonfloof.dracoloader.transform.IDracoTransformer
 import java.io.File
 import java.io.IOException
@@ -98,14 +99,31 @@ object DracoModLoader {
         }
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
-            for(i in mod.getListeners()!!) {
-                val className = i.asString!!
-                try {
-                    val clazz: Class<*> = Launch.classLoader.findClass(className)
-                    DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
-                } catch(e: ClassNotFoundException) {
-                    LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
-                    LOGGER.error("Error reason: $e")
+            if(mod.getTransformers() != null) {
+                for (i in mod.getTransformers()!!) {
+                    val className = i.asString!!
+                    try {
+                        val clazz: Class<*> = Launch.classLoader.findClass(className)
+                        DracoTransformerRegistry.addTransformer(clazz.getDeclaredConstructor().newInstance() as IDracoTransformer)
+                    } catch (e: ClassNotFoundException) {
+                        LOGGER.error("Mod \"$id\" specified transformer \"$className\" which doesn't contain a valid class, skipping")
+                        LOGGER.error("Error reason: $e")
+                    }
+                }
+            }
+        }
+        for(mod in MODS.values.toList()) {
+            val id = mod.getID()
+            if(mod.getListeners() != null) {
+                for (i in mod.getListeners()!!) {
+                    val className = i.asString!!
+                    try {
+                        val clazz: Class<*> = Launch.classLoader.findClass(className)
+                        DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
+                    } catch (e: ClassNotFoundException) {
+                        LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
+                        LOGGER.error("Error reason: $e")
+                    }
                 }
             }
         }
