@@ -119,7 +119,7 @@ object DracoModLoader {
                     path = File(URL(path).toURI()).resolve(it.getAccessWidener()!!).toURI().toString()
                     if (!File(URI(path)).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
                     try {
-                        File(path).bufferedReader().use { reader ->
+                        File(URI(path)).bufferedReader().use { reader ->
                             accessWidenerReader.read(
                                 reader,
                                 "named"
