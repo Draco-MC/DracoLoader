@@ -111,11 +111,6 @@ object DracoModLoader {
                 throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
             }
         }
-        MixinBootstrap.init()
-        MixinExtrasBootstrap.init()
-        MIXINS.forEach {
-            Mixins.addConfiguration(it, DracoMixinConfigSource(it))
-        }
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
             if(mod.getTransformers() != null) {
@@ -130,6 +125,11 @@ object DracoModLoader {
                     }
                 }
             }
+        }
+        MixinBootstrap.init()
+        MixinExtrasBootstrap.init()
+        MIXINS.forEach {
+            Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
