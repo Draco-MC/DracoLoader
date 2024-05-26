@@ -7,6 +7,7 @@ import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
 import org.spongepowered.asm.launch.MixinBootstrap
+import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
@@ -27,6 +28,7 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.jar.JarFile
+import java.util.zip.ZipFile
 import kotlin.io.path.toPath
 
 
@@ -77,6 +79,7 @@ object DracoModLoader {
             modInfo.getID()?.let { MODS.put(it,modInfo) }
             when(url.protocol) {
                 "jar" -> {
+                    println(url)
                     val spec = url.file
                     val separator = spec.indexOf("!/")
                     if (separator == -1) {
@@ -97,19 +100,36 @@ object DracoModLoader {
         val accessWidenerReader = AccessWidenerReader(accessWidener)
         MODS.values.forEach {
             if (it.getAccessWidener() != null) {
-                val path = MOD_PATHS[it.getID()!!]!!.resolve(it.getAccessWidener()!!)
-                if (!File(path).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
-                try {
-                    File(path).bufferedReader().use { reader ->
-                        accessWidenerReader.read(
-                            reader,
-                            "named"
-                        )
+                var path = MOD_PATHS[it.getID()!!]!!.toURL().toString()
+                if(path.endsWith(".jar")) {
+                    val jarFile = JarFile(File(URL(path).toURI()))
+                    val entry = jarFile.getEntry(it.getAccessWidener()!!)
+                        ?: throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
+                    try {
+                        jarFile.getInputStream(entry).bufferedReader().use { reader ->
+                            accessWidenerReader.read(
+                                reader,
+                                "named"
+                            )
+                        }
+                    } catch (e: Exception) {
+                        throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
                     }
-                } catch (e: Exception) {
-                    throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
+                } else {
+                    path = File(URL(path).toURI()).resolve(it.getAccessWidener()!!).toURI().toString()
+                    if (!File(URI(path)).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
+                    try {
+                        File(path).bufferedReader().use { reader ->
+                            accessWidenerReader.read(
+                                reader,
+                                "named"
+                            )
+                        }
+                    } catch (e: Exception) {
+                        throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
+                    }
                 }
-            }
+                }
         }
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
@@ -126,6 +146,7 @@ object DracoModLoader {
                 }
             }
         }
+        MixinEnvironment.CompatibilityLevel.MAX_SUPPORTED = MixinEnvironment.CompatibilityLevel.JAVA_21
         MixinBootstrap.init()
         MixinExtrasBootstrap.init()
         MIXINS.forEach {

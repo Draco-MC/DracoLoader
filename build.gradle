@@ -46,11 +46,11 @@ shadowJar {
         include(dependency("com.formdev:flatlaf"))
         include(dependency("org.spongepowered:mixin"))
         include(dependency("io.github.llamalad7:mixinextras-common"))
-        include(dependency('org.ow2.asm:asm'))
-        include(dependency('org.ow2.asm:asm-tree'))
-        include(dependency('org.ow2.asm:asm-util'))
-        include(dependency('org.ow2.asm:asm-commons'))
-        include(dependency('org.ow2.asm:asm-analysis'))
+        include(dependency('org.ow2.asm:asm:9.7'))
+        include(dependency('org.ow2.asm:asm-tree:9.7'))
+        include(dependency('org.ow2.asm:asm-util:9.7'))
+        include(dependency('org.ow2.asm:asm-commons:9.7'))
+        include(dependency('org.ow2.asm:asm-analysis:9.7'))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
@@ -71,7 +71,8 @@ kotlin {
 jar {
     manifest {
         attributes(
-                'Main-Class': "net.minecraft.launchwrapper.Launch"
+                'Main-Class': "net.minecraft.launchwrapper.Launch",
+                'Implementation-Version': 9.7
         )
     }
 }

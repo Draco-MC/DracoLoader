@@ -10,6 +10,8 @@ import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
 
 object DracoStandardTransformer : IDracoTransformer {
     override fun transform(loader: ClassLoader, className: String, originalClassData: ByteArray?): ByteArray? {
+        if(originalClassData == null)
+            return originalClassData
         val isMinecraftClass =
             className.startsWith("net.minecraft.") || className.startsWith("com.mojang.") || className.indexOf('.') < 0
         val applyAccessWidener = isMinecraftClass && accessWidener.targets.contains(className)

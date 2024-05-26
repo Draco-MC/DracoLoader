@@ -6,7 +6,7 @@ import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper
 
 open class LaunchWrapperMixinService : MixinServiceLaunchWrapper() {
     override fun getMaxCompatibilityLevel(): CompatibilityLevel? {
-        return CompatibilityLevel.JAVA_17
+        return CompatibilityLevel.JAVA_21
     }
 
     override fun getPlatformAgents(): Collection<String> {
