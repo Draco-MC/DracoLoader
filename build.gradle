@@ -27,7 +27,7 @@ dependencies {
 
     implementation "com.formdev:flatlaf:3.4.1"
     api('org.spongepowered:mixin:0.8.6')
-    api ("io.github.llamalad7:mixinextras-common:0.3.5")
+    api ("io.github.llamalad7:mixinextras-common:0.3.6")
     implementation 'org.ow2.asm:asm:9.7'
     implementation 'org.ow2.asm:asm-tree:9.7'
     implementation 'org.ow2.asm:asm-util:9.7'
@@ -55,7 +55,9 @@ shadowJar {
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         include(dependency('com.google.code.gson:gson'))
     }
-
+    mergeServiceFiles {
+        exclude 'META-INF/services/org.spongepowered.asm.service.IMixinService'
+    }
 }
 
 kotlin {
