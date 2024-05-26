@@ -2,15 +2,16 @@ package sh.talonfloof.dracoloader.mod
 
 import com.google.gson.Gson
 import com.llamalad7.mixinextras.MixinExtrasBootstrap
+import net.fabricmc.accesswidener.AccessWidenerReader
 import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
 import org.spongepowered.asm.launch.MixinBootstrap
-import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
-import sh.talonfloof.dracoloader.isServer
+import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
+import sh.talonfloof.dracoloader.transform.DracoStandardTransformer
 import sh.talonfloof.dracoloader.transform.DracoTransformerRegistry
 import sh.talonfloof.dracoloader.transform.IDracoTransformer
 import java.io.File
@@ -90,6 +91,24 @@ object DracoModLoader {
                 else -> {
                     throw RuntimeException("Unsupported Protocol: $url")
                 }
+            }
+        }
+        DracoTransformerRegistry.addTransformer(DracoStandardTransformer)
+        val accessWidenerReader = AccessWidenerReader(accessWidener)
+        MODS.values.forEach {
+            if(it.getAccessWidener() == null)
+                return
+            val path = MOD_PATHS[it.getID()!!]!!.resolve(it.getAccessWidener()!!)
+            if(!File(path).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
+            try {
+                File(path).bufferedReader().use { reader ->
+                    accessWidenerReader.read(
+                        reader,
+                        "named"
+                    )
+                }
+            } catch (e: Exception) {
+                throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
             }
         }
         MixinBootstrap.init()

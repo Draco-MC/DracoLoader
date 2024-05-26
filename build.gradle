@@ -36,6 +36,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20"
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.github.Draco-MC:LaunchWrapper:master-SNAPSHOT'
+    implementation "net.fabricmc:access-widener:2.1.0"
 }
 
 shadowJar {
@@ -54,6 +55,7 @@ shadowJar {
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8"))
         include(dependency('com.google.code.gson:gson'))
+        include(dependency("net.fabricmc:access-widener:2.1.0"))
     }
     mergeServiceFiles {
         exclude 'META-INF/services/org.spongepowered.asm.service.IMixinService'
