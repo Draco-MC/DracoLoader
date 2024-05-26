@@ -96,19 +96,19 @@ object DracoModLoader {
         DracoTransformerRegistry.addTransformer(DracoStandardTransformer)
         val accessWidenerReader = AccessWidenerReader(accessWidener)
         MODS.values.forEach {
-            if(it.getAccessWidener() == null)
-                return
-            val path = MOD_PATHS[it.getID()!!]!!.resolve(it.getAccessWidener()!!)
-            if(!File(path).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
-            try {
-                File(path).bufferedReader().use { reader ->
-                    accessWidenerReader.read(
-                        reader,
-                        "named"
-                    )
+            if (it.getAccessWidener() != null) {
+                val path = MOD_PATHS[it.getID()!!]!!.resolve(it.getAccessWidener()!!)
+                if (!File(path).exists()) throw RuntimeException("Missing AccessWidener file ${it.getAccessWidener()!!} for mod ${it.getID()!!}")
+                try {
+                    File(path).bufferedReader().use { reader ->
+                        accessWidenerReader.read(
+                            reader,
+                            "named"
+                        )
+                    }
+                } catch (e: Exception) {
+                    throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
                 }
-            } catch (e: Exception) {
-                throw java.lang.RuntimeException("Failed to read AccessWidener file from mod " + it.getID()!!, e)
             }
         }
         for(mod in MODS.values.toList()) {
