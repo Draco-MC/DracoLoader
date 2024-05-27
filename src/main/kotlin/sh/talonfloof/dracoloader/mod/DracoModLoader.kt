@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
+import sh.talonfloof.dracoloader.isServer
 import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
 import sh.talonfloof.dracoloader.transform.DracoStandardTransformer
 import sh.talonfloof.dracoloader.transform.DracoTransformerRegistry
@@ -139,8 +140,7 @@ object DracoModLoader {
                         val clazz: Class<*> = Launch.classLoader.findClass(className)
                         DracoTransformerRegistry.addTransformer(clazz.getDeclaredConstructor().newInstance() as IDracoTransformer)
                     } catch (e: ClassNotFoundException) {
-                        LOGGER.error("Mod \"$id\" specified transformer \"$className\" which doesn't contain a valid class, skipping")
-                        LOGGER.error("Error reason: $e")
+                        throw RuntimeException("Mod \"$id\" specified transformer \"$className\" which doesn't contain a valid class", e)
                     }
                 }
             }
@@ -154,14 +154,20 @@ object DracoModLoader {
         for(mod in MODS.values.toList()) {
             val id = mod.getID()
             if(mod.getListeners() != null) {
-                for (i in mod.getListeners()!!) {
-                    val className = i.asString!!
-                    try {
-                        val clazz: Class<*> = Launch.classLoader.findClass(className)
-                        DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
-                    } catch (e: ClassNotFoundException) {
-                        LOGGER.error("Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class, skipping")
-                        LOGGER.error("Error reason: $e")
+                for(category in mod.getListeners()!!.entrySet()) {
+                    if(category.key == "COMMON" || category.key == (if(isServer) "SERVER" else "CLIENT")) {
+                        for (i in category.value.asJsonArray) {
+                            val className = i.asString!!
+                            try {
+                                val clazz: Class<*> = Launch.classLoader.findClass(className)
+                                DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
+                            } catch (e: ClassNotFoundException) {
+                                throw RuntimeException(
+                                    "Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class",
+                                    e
+                                )
+                            }
+                        }
                     }
                 }
             }

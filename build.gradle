@@ -11,7 +11,7 @@ targetCompatibility = '1.8'
 apply plugin: 'kotlin'
 
 group = 'sh.talonfloof.dracoloader'
-version = "0.1.0-SNAPSHOT"
+version = "main-SNAPSHOT"
 
 repositories {
     mavenCentral()

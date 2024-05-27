@@ -1,6 +1,7 @@
 package sh.talonfloof.dracoloader.mod
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 
 class DracoMod {
     private var id: String? = null
@@ -10,7 +11,7 @@ class DracoMod {
     private var description: String? = null
     private var mixin: String? = null
     private var transformers: JsonArray? = null
-    private var listeners: JsonArray? = null
+    private var listeners: JsonObject? = null
     private var accessWidener: String? = null
 
     fun getID(): String? = id
@@ -26,7 +27,7 @@ class DracoMod {
     fun getMixin(): String? = mixin
     fun getTransformers(): JsonArray? = transformers
 
-    fun getListeners(): JsonArray? = listeners
+    fun getListeners(): JsonObject? = listeners
 
     fun getAccessWidener(): String? = accessWidener
 
@@ -70,7 +71,7 @@ class DracoMod {
             transformers = value
         }
     }
-    fun setListeners(value: JsonArray?) {
+    fun setListeners(value: JsonObject?) {
         if(listeners == null) {
             listeners = value
         }
