@@ -79,7 +79,6 @@ object DracoModLoader {
             modInfo.getID()?.let { MODS.put(it,modInfo) }
             when(url.protocol) {
                 "jar" -> {
-                    println(url)
                     val spec = url.file
                     val separator = spec.indexOf("!/")
                     if (separator == -1) {
