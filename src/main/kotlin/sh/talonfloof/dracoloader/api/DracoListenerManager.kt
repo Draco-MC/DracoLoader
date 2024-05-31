@@ -9,17 +9,21 @@ object DracoListenerManager {
 
     @JvmStatic
     fun getListeners(listenerInterface: Class<*>): MutableList<*>? {
-        if(orderedListeners[listenerInterface] == null) {
-            val l = mutableListOf<Any>()
-            if (commonListeners[listenerInterface] != null) {
-                l.addAll(commonListeners[listenerInterface]!!)
+        if(!frozen) {
+            if (orderedListeners[listenerInterface] == null) {
+                val l = mutableListOf<Any>()
+                if (commonListeners[listenerInterface] != null) {
+                    l.addAll(commonListeners[listenerInterface]!!)
+                }
+                if (listeners[listenerInterface] != null) {
+                    l.addAll(listeners[listenerInterface]!!)
+                }
+                orderedListeners[listenerInterface] = l
             }
-            if (listeners[listenerInterface] != null) {
-                l.addAll(listeners[listenerInterface]!!)
-            }
-            orderedListeners[listenerInterface] = l
+            return orderedListeners[listenerInterface]
+        } else {
+            throw RuntimeException("Attempted to get listeners with the interface ${listenerInterface.name} before the listener manager was frozen!")
         }
-        return orderedListeners[listenerInterface]
     }
     @JvmStatic
     fun addListener(clazz: Any, isCommon: Boolean) {
