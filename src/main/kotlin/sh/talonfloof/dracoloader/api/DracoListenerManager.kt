@@ -2,6 +2,7 @@ package sh.talonfloof.dracoloader.api
 
 
 object DracoListenerManager {
+    private var frozen: Boolean = false
     private var commonListeners: HashMap<Class<*>, MutableList<Any>> = HashMap()
     private var listeners: HashMap<Class<*>, MutableList<Any>> = HashMap()
     private var orderedListeners: HashMap<Class<*>, MutableList<Any>> = HashMap()
@@ -22,18 +23,29 @@ object DracoListenerManager {
     }
     @JvmStatic
     fun addListener(clazz: Any, isCommon: Boolean) {
-        for(i in clazz.javaClass.interfaces.iterator()) {
-            if(isCommon) {
-                if (!commonListeners.containsKey(i)) {
-                    commonListeners[i] = ArrayList()
+        if(!frozen) {
+            for (i in clazz.javaClass.interfaces.iterator()) {
+                if (isCommon) {
+                    if (!commonListeners.containsKey(i)) {
+                        commonListeners[i] = ArrayList()
+                    }
+                    commonListeners[i]?.add(clazz)
+                } else {
+                    if (!listeners.containsKey(i)) {
+                        listeners[i] = ArrayList()
+                    }
+                    listeners[i]?.add(clazz)
                 }
-                commonListeners[i]?.add(clazz)
-            } else {
-                if (!listeners.containsKey(i)) {
-                    listeners[i] = ArrayList()
-                }
-                listeners[i]?.add(clazz)
             }
+        } else {
+            throw RuntimeException("Attempted to register a listener after the listener manager is frozen!")
+        }
+    }
+
+    @JvmStatic
+    fun freeze() {
+        if(!frozen) {
+            frozen = true
         }
     }
 }

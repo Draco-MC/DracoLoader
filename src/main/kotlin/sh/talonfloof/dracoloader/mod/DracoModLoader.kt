@@ -172,5 +172,6 @@ object DracoModLoader {
                 }
             }
         }
+        DracoListenerManager.freeze()
     }
 }
