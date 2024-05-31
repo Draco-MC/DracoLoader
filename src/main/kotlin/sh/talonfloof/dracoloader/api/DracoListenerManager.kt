@@ -9,7 +9,7 @@ object DracoListenerManager {
 
     @JvmStatic
     fun getListeners(listenerInterface: Class<*>): MutableList<*>? {
-        if(!frozen) {
+        if(frozen) {
             if (orderedListeners[listenerInterface] == null) {
                 val l = mutableListOf<Any>()
                 if (commonListeners[listenerInterface] != null) {
