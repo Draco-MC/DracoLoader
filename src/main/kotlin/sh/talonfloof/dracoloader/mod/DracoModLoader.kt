@@ -160,7 +160,7 @@ object DracoModLoader {
                             val className = i.asString!!
                             try {
                                 val clazz: Class<*> = Launch.classLoader.findClass(className)
-                                DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance())
+                                DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),category.key == "COMMON")
                             } catch (e: ClassNotFoundException) {
                                 throw RuntimeException(
                                     "Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class",
