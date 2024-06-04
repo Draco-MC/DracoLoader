@@ -11,7 +11,6 @@ class DracoMod {
     private var description: String? = null
     private var mixin: String? = null
     private var transformers: JsonArray? = null
-    private var listeners: JsonObject? = null
     private var accessWidener: String? = null
 
     fun getID(): String? = id
@@ -27,7 +26,6 @@ class DracoMod {
     fun getMixin(): String? = mixin
     fun getTransformers(): JsonArray? = transformers
 
-    fun getListeners(): JsonObject? = listeners
 
     fun getAccessWidener(): String? = accessWidener
 
@@ -69,11 +67,6 @@ class DracoMod {
     fun setTransformers(value: JsonArray?) {
         if(transformers == null) {
             transformers = value
-        }
-    }
-    fun setListeners(value: JsonObject?) {
-        if(listeners == null) {
-            listeners = value
         }
     }
     fun setAccessWidener(value: String?) {

@@ -11,26 +11,26 @@ import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
+import sh.talonfloof.dracoloader.api.ListenerSubscriber
 import sh.talonfloof.dracoloader.isServer
 import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
 import sh.talonfloof.dracoloader.transform.DracoStandardTransformer
 import sh.talonfloof.dracoloader.transform.DracoTransformerRegistry
 import sh.talonfloof.dracoloader.transform.IDracoTransformer
+import sh.talonfloof.dracoloader.util.ClassFinder
 import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
+import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.security.CodeSource
 import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
-import kotlin.io.path.toPath
+import kotlin.io.path.*
 
 
 object DracoModLoader {
@@ -39,6 +39,7 @@ object DracoModLoader {
     var MOD_PATHS: MutableMap<String, URI> = mutableMapOf()
     var MIXINS: MutableList<String> = mutableListOf()
 
+    @OptIn(ExperimentalPathApi::class)
     fun loadMods() {
         LOGGER.info("Attempting to discover Draco-compatible mods...")
         MODS_DIRECTORY.mkdir()
@@ -151,26 +152,37 @@ object DracoModLoader {
         MIXINS.forEach {
             Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
-        for(mod in MODS.values.toList()) {
-            val id = mod.getID()
-            if(mod.getListeners() != null) {
-                for(category in mod.getListeners()!!.entrySet()) {
-                    if(category.key == "COMMON" || category.key == (if(isServer) "SERVER" else "CLIENT")) {
-                        for (i in category.value.asJsonArray) {
-                            val className = i.asString!!
-                            try {
-                                val clazz: Class<*> = Launch.classLoader.findClass(className)
-                                DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),category.key == "COMMON")
-                            } catch (e: ClassNotFoundException) {
-                                throw RuntimeException(
-                                    "Mod \"$id\" specified listener \"$className\" which doesn't contain a valid class",
-                                    e
-                                )
+        LOGGER.info("Scanning Discovered Mods... (This may take some time depending on the amount of mods being loaded)")
+        ClassFinder.findClasses {
+            val classReader = ClassReader(Launch.classLoader!!.getResourceAsStream(it))
+            classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
+                override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
+                    if(Type.getDescriptor(ListenerSubscriber::class.java).equals(descriptor)) {
+                        return object : AnnotationVisitor(Opcodes.ASM9) {
+                            override fun visitEnum(name: String, descriptor: String?, value: String) {
+                                if("value" == name) {
+                                    if(value == "COMMON" || value == (if(isServer) "SERVER" else "CLIENT")) {
+                                        val extIndex = it.lastIndexOf(".class")
+                                        assert(extIndex != -1)
+                                        val className = it.substring(0,extIndex).replace("/",".")
+                                        try {
+                                            val clazz: Class<*> = Launch.classLoader.findClass(className)
+                                            DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),value == "COMMON")
+                                        } catch (e: ClassNotFoundException) {
+                                            throw RuntimeException(
+                                                "Listener \"$className\" doesn't contain a valid class",
+                                                e
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    return null
                 }
-            }
+            },0)
+            true
         }
         DracoListenerManager.freeze()
     }
