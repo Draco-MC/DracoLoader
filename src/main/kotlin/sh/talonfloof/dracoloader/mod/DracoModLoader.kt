@@ -184,23 +184,6 @@ object DracoModLoader {
                     }
                 }
             }
-            /*classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
-                override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
-                    if(.equals(descriptor)) {
-                        return object : AnnotationVisitor(Opcodes.ASM9) {
-                            override fun visitEnum(name: String, descriptor: String?, value: String) {
-                                println(name)
-                                if("value" == name) {
-
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return null
-                }
-            },0)*/
             true
         }
         DracoListenerManager.freeze()
