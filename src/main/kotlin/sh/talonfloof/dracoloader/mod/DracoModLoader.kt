@@ -6,6 +6,7 @@ import net.fabricmc.accesswidener.AccessWidenerReader
 import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
+import org.objectweb.asm.tree.ClassNode
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
@@ -154,26 +155,44 @@ object DracoModLoader {
         }
         LOGGER.info("Scanning Discovered Mods... (This may take some time depending on the amount of mods being loaded)")
         ClassFinder.findClasses {
-            val classReader = ClassReader(Launch.classLoader!!.getResourceAsStream(it))
-            classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
+            val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
+            val node = ClassNode()
+            classReader.accept(node, 0)
+            for(i in node.visibleAnnotations ?: listOf()) {
+                if(i.desc == Type.getDescriptor(ListenerSubscriber::class.java)) {
+                    var value = "COMMON"
+                    for(v in i.values ?: listOf()) {
+                        if(v is Array<*> && v.isArrayOf<String>()) {
+                            if(v[0] == "Lsh/talonfloof/dracoloader/api/EnvironmentType;") {
+                                value = v[1].toString()
+                            }
+                        }
+                    }
+                    if(value == "COMMON" || value == (if(isServer) "SERVER" else "CLIENT")) {
+                        val extIndex = it.lastIndexOf(".class")
+                        assert(extIndex != -1)
+                        val className = it.substring(0,extIndex).replace("/",".")
+                        try {
+                            val clazz: Class<*> = Launch.classLoader.findClass(className)
+                            DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),value == "COMMON")
+                        } catch (e: ClassNotFoundException) {
+                            throw RuntimeException(
+                                "Listener \"$className\" doesn't contain a valid class",
+                                e
+                            )
+                        }
+                    }
+                }
+            }
+            /*classReader.accept(object : ClassVisitor(Opcodes.ASM9) {
                 override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
-                    if(Type.getDescriptor(ListenerSubscriber::class.java).equals(descriptor)) {
+                    if(.equals(descriptor)) {
                         return object : AnnotationVisitor(Opcodes.ASM9) {
                             override fun visitEnum(name: String, descriptor: String?, value: String) {
+                                println(name)
                                 if("value" == name) {
-                                    if(value == "COMMON" || value == (if(isServer) "SERVER" else "CLIENT")) {
-                                        val extIndex = it.lastIndexOf(".class")
-                                        assert(extIndex != -1)
-                                        val className = it.substring(0,extIndex).replace("/",".")
-                                        try {
-                                            val clazz: Class<*> = Launch.classLoader.findClass(className)
-                                            DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),value == "COMMON")
-                                        } catch (e: ClassNotFoundException) {
-                                            throw RuntimeException(
-                                                "Listener \"$className\" doesn't contain a valid class",
-                                                e
-                                            )
-                                        }
+
+
                                     }
                                 }
                             }
@@ -181,7 +200,7 @@ object DracoModLoader {
                     }
                     return null
                 }
-            },0)
+            },0)*/
             true
         }
         DracoListenerManager.freeze()

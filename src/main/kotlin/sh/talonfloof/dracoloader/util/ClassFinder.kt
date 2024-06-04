@@ -3,6 +3,7 @@ package sh.talonfloof.dracoloader.util
 import net.minecraft.launchwrapper.Launch
 import sh.talonfloof.dracoloader.mod.DracoModLoader
 import java.io.File
+import java.net.URI
 import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -14,11 +15,16 @@ fun interface ClassFinderVisitor {
 
 object ClassFinder {
     fun findClasses(visitor: ClassFinderVisitor) {
-        val paths = DracoModLoader.MOD_PATHS
-        for (path in paths.values) {
+        for (path in DracoModLoader.MOD_PATHS.values) {
             val file = File(path)
             if (file.exists()) {
                 findClasses(file, file, true, visitor)
+            }
+        }
+        for(path in Launch.classLoader.sources) {
+            val file = File(path.toURI())
+            if (file.exists()) {
+                findClasses(file, file, false, visitor)
             }
         }
     }
@@ -69,6 +75,6 @@ object ClassFinder {
             sb.insert(0, '.').insert(0, file.getName())
             file = file.getParentFile()
         }
-        return sb.toString()
+        return sb.toString().replace(".","/").plus(".class")
     }
 }
