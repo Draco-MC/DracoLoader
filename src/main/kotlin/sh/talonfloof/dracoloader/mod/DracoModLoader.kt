@@ -52,13 +52,6 @@ object DracoModLoader {
                     try {
                         val jarFile = JarFile(file.toFile())
                         if (jarFile.getEntry("draco.json") != null) {
-                            /*val info = Gson().fromJson(
-                                IOUtils.toString(
-                                    jarFile.getInputStream(jarFile.getJarEntry("vulpes.json")),
-                                    StandardCharsets.UTF_8
-                                ), VulpesMod::class.java
-                            )
-                            info.getID()?.let { ModJars.put(it, file.toUri()) }*/
                             Launch.classLoader.addURL(file.toUri().toURL())
                         } else {
                             LOGGER.error("Attempted to load incompatible mod, "+file.toFile().nameWithoutExtension)
@@ -153,7 +146,7 @@ object DracoModLoader {
         MIXINS.forEach {
             Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
-        LOGGER.info("Scanning Discovered Mods... (This may take some time depending on the amount of mods being loaded)")
+        LOGGER.info("Scanning Discovered Mods... (This may take some time depending on the amount of mods loaded)")
         ClassFinder.findClasses {
             val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
             val node = ClassNode()
