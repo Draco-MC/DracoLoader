@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
+import sh.talonfloof.dracoloader.api.DracoTransformer
 import sh.talonfloof.dracoloader.api.ListenerSubscriber
 import sh.talonfloof.dracoloader.isServer
 import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
@@ -126,19 +127,25 @@ object DracoModLoader {
                 }
                 }
         }
-        for(mod in MODS.values.toList()) {
-            val id = mod.getID()
-            if(mod.getTransformers() != null) {
-                for (i in mod.getTransformers()!!) {
-                    val className = i.asString!!
+        LOGGER.info("Scanning Discovered Mods (iteration 1)... (This may take some time depending on the amount of mods loaded)")
+        ClassFinder.findClasses {
+            val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
+            val node = ClassNode()
+            classReader.accept(node, 0)
+            for (i in node.visibleAnnotations ?: listOf()) {
+                if(i.desc == Type.getDescriptor(DracoTransformer::class.java)) {
+                    val extIndex = it.lastIndexOf(".class")
+                    assert(extIndex != -1)
+                    val className = it.substring(0,extIndex).replace("/",".")
                     try {
                         val clazz: Class<*> = Launch.classLoader.findClass(className)
                         DracoTransformerRegistry.addTransformer(clazz.getDeclaredConstructor().newInstance() as IDracoTransformer)
                     } catch (e: ClassNotFoundException) {
-                        throw RuntimeException("Mod \"$id\" specified transformer \"$className\" which doesn't contain a valid class", e)
+                        throw RuntimeException("Specified transformer \"$className\" doesn't contain a valid class", e)
                     }
                 }
             }
+            true
         }
         MixinEnvironment.CompatibilityLevel.MAX_SUPPORTED = MixinEnvironment.CompatibilityLevel.JAVA_21
         MixinBootstrap.init()
@@ -146,7 +153,7 @@ object DracoModLoader {
         MIXINS.forEach {
             Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
-        LOGGER.info("Scanning Discovered Mods... (This may take some time depending on the amount of mods loaded)")
+        LOGGER.info("Scanning Discovered Mods (iteration 2)...")
         ClassFinder.findClasses {
             val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
             val node = ClassNode()
