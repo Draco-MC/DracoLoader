@@ -127,7 +127,7 @@ object DracoModLoader {
                 }
                 }
         }
-        LOGGER.info("Scanning Discovered Mods (iteration 1)... (This may take some time depending on the amount of mods loaded)")
+        LOGGER.info("Scanning Discovered Mods (iteration 1)...")
         ClassFinder.findClasses {
             val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
             val node = ClassNode()
