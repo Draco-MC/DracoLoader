@@ -6,6 +6,7 @@ import net.fabricmc.accesswidener.AccessWidenerReader
 import net.minecraft.launchwrapper.*
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
+import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.ClassNode
 import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.MixinEnvironment
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
 import sh.talonfloof.dracoloader.api.DracoListenerManager
 import sh.talonfloof.dracoloader.api.DracoTransformer
+import sh.talonfloof.dracoloader.api.EnvironmentType
 import sh.talonfloof.dracoloader.api.ListenerSubscriber
 import sh.talonfloof.dracoloader.isServer
 import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
@@ -127,25 +129,34 @@ object DracoModLoader {
                 }
                 }
         }
-        LOGGER.info("Scanning Discovered Mods (iteration 1)...")
+        LOGGER.info("Scanning Discovered Mods...")
+        val annots = mutableMapOf<String, MutableList<Pair<String, AnnotationNode>>>()
         ClassFinder.findClasses {
             val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
             val node = ClassNode()
             classReader.accept(node, 0)
             for (i in node.visibleAnnotations ?: listOf()) {
-                if(i.desc == Type.getDescriptor(DracoTransformer::class.java)) {
+                if(i.desc == Type.getDescriptor(DracoTransformer::class.java) || i.desc == Type.getDescriptor(ListenerSubscriber::class.java)) {
                     val extIndex = it.lastIndexOf(".class")
                     assert(extIndex != -1)
                     val className = it.substring(0,extIndex).replace("/",".")
-                    try {
-                        val clazz: Class<*> = Launch.classLoader.findClass(className)
-                        DracoTransformerRegistry.addTransformer(clazz.getDeclaredConstructor().newInstance() as IDracoTransformer)
-                    } catch (e: ClassNotFoundException) {
-                        throw RuntimeException("Specified transformer \"$className\" doesn't contain a valid class", e)
-                    }
+                    annots.getOrPut(i.desc) { mutableListOf() }.add(Pair(className,i))
                 }
             }
             true
+        }
+        if(annots.containsKey(Type.getDescriptor(DracoTransformer::class.java))) {
+            LOGGER.info("Registering Transformers...")
+            for(i in annots[Type.getDescriptor(DracoTransformer::class.java)]!!) {
+                try {
+                    val clazz: Class<*> = Launch.classLoader.findClass(i.first)
+                    DracoTransformerRegistry.addTransformer(
+                        clazz.getDeclaredConstructor().newInstance() as IDracoTransformer
+                    )
+                } catch (e: ClassNotFoundException) {
+                    throw RuntimeException("Specified transformer \"${i.first}\" doesn't contain a valid class", e)
+                }
+            }
         }
         MixinEnvironment.CompatibilityLevel.MAX_SUPPORTED = MixinEnvironment.CompatibilityLevel.JAVA_21
         MixinBootstrap.init()
@@ -153,38 +164,29 @@ object DracoModLoader {
         MIXINS.forEach {
             Mixins.addConfiguration(it, DracoMixinConfigSource(it))
         }
-        LOGGER.info("Scanning Discovered Mods (iteration 2)...")
-        ClassFinder.findClasses {
-            val classReader = ClassReader(Launch.classLoader!!.findResource(it).openStream())
-            val node = ClassNode()
-            classReader.accept(node, 0)
-            for(i in node.visibleAnnotations ?: listOf()) {
-                if(i.desc == Type.getDescriptor(ListenerSubscriber::class.java)) {
-                    var value = "COMMON"
-                    for(v in i.values ?: listOf()) {
-                        if(v is Array<*> && v.isArrayOf<String>()) {
-                            if(v[0] == "Lsh/talonfloof/dracoloader/api/EnvironmentType;") {
-                                value = v[1].toString()
-                            }
-                        }
-                    }
-                    if(value == "COMMON" || value == (if(isServer) "SERVER" else "CLIENT")) {
-                        val extIndex = it.lastIndexOf(".class")
-                        assert(extIndex != -1)
-                        val className = it.substring(0,extIndex).replace("/",".")
-                        try {
-                            val clazz: Class<*> = Launch.classLoader.findClass(className)
-                            DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),value == "COMMON")
-                        } catch (e: ClassNotFoundException) {
-                            throw RuntimeException(
-                                "Listener \"$className\" doesn't contain a valid class",
-                                e
-                            )
+        if(annots.containsKey(Type.getDescriptor(ListenerSubscriber::class.java))) {
+            LOGGER.info("Registering Listeners...")
+            for(entry in annots[Type.getDescriptor(ListenerSubscriber::class.java)]!!) {
+                var value = "COMMON"
+                for(v in entry.second.values ?: listOf()) {
+                    if(v is Array<*> && v.isArrayOf<String>()) {
+                        if(v[0] == Type.getDescriptor(EnvironmentType::class.java)) {
+                            value = v[1].toString()
                         }
                     }
                 }
+                if(value == "COMMON" || value == (if(isServer) "SERVER" else "CLIENT")) {
+                    try {
+                        val clazz: Class<*> = Launch.classLoader.findClass(entry.first)
+                        DracoListenerManager.addListener(clazz.getDeclaredConstructor().newInstance(),value == "COMMON")
+                    } catch (e: ClassNotFoundException) {
+                        throw RuntimeException(
+                            "Listener \"${entry.first}\" doesn't contain a valid class",
+                            e
+                        )
+                    }
+                }
             }
-            true
         }
         DracoListenerManager.freeze()
     }
