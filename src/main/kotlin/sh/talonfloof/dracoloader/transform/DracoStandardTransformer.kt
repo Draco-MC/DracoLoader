@@ -105,11 +105,17 @@ class EnvironmentStripper(api: Int, visitor: ClassVisitor, private val data: Env
 }
 
 object DracoStandardTransformer : IDracoTransformer {
+    var applyPreInitRestrictions: Boolean = true
+
     override fun transform(loader: ClassLoader, className: String, originalClassData: ByteArray?): ByteArray? {
         if(originalClassData == null)
             return originalClassData
         val isMinecraftClass =
             className.startsWith("net.minecraft.") || className.startsWith("com.mojang.") || className.indexOf('.') < 0
+        if(isMinecraftClass && applyPreInitRestrictions) {
+            LOGGER.error("Class $className cannot be loaded during state PREINIT")
+            return null
+        }
         val applyAccessWidener = isMinecraftClass && accessWidener.targets.contains(className)
         val environmentStrip = !isMinecraftClass
         val classReader = ClassReader(originalClassData)

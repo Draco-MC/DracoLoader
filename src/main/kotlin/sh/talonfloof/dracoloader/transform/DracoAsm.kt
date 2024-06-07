@@ -231,29 +231,29 @@ private class VisitorInsnBuilder(private val parent: MethodVisitor) : InsnBuilde
     override fun InsnList.unaryPlus() = accept(parent)
 }
 
-public fun asm(block: InsnBuilder.() -> Unit): InsnList =
+fun asm(block: InsnBuilder.() -> Unit): InsnList =
     InsnListBuilder().apply(block).list
 
-public fun MethodVisitor.visitAsm(block: InsnBuilder.() -> Unit) {
+fun MethodVisitor.visitAsm(block: InsnBuilder.() -> Unit) {
     VisitorInsnBuilder(this).run(block)
 }
 
-public fun List<MethodNode>.named(name: String) = find { it.name == name }!!
-public fun List<MethodNode>.search(name: String, desc: String) = find { it.name == name && it.desc == desc }!!
-public fun List<MethodNode>.search(name: String, returnType: String, vararg args: String) = find { it.name == name && it.desc == "(${args.joinToString("")})$returnType" }!!
-public fun List<FieldNode>.named(name: String) = find { it.name == name }!!
-public fun List<FieldNode>.search(name: String, type: String) = find { it.name == name && it.desc == type }!!
+fun List<MethodNode>.named(name: String) = find { it.name == name }!!
+fun List<MethodNode>.search(name: String, desc: String) = find { it.name == name && it.desc == desc }!!
+fun List<MethodNode>.search(name: String, returnType: String, vararg args: String) = find { it.name == name && it.desc == "(${args.joinToString("")})$returnType" }!!
+fun List<FieldNode>.named(name: String) = find { it.name == name }!!
+fun List<FieldNode>.search(name: String, type: String) = find { it.name == name && it.desc == type }!!
 
-public inline fun <reified T : Any> internalNameOf(): String = Type.getInternalName(T::class.java)
-public fun internalNameOf(javaClass: KClass<*>): String = Type.getInternalName(javaClass.java)
+inline fun <reified T : Any> internalNameOf(): String = Type.getInternalName(T::class.java)
+fun internalNameOf(javaClass: KClass<*>): String = Type.getInternalName(javaClass.java)
 
-public inline fun <reified T : AbstractInsnNode> AbstractInsnNode.next(p: (T) -> Boolean = { true }): T? {
+inline fun <reified T : AbstractInsnNode> AbstractInsnNode.next(p: (T) -> Boolean = { true }): T? {
     return generateSequence(next) { it.next }.filterIsInstance<T>().find(p)
 }
 
-public inline fun <reified T : AbstractInsnNode> AbstractInsnNode.prev(p: (T) -> Boolean = { true }): T? {
+inline fun <reified T : AbstractInsnNode> AbstractInsnNode.prev(p: (T) -> Boolean = { true }): T? {
     return generateSequence(previous) { it.previous }.filterIsInstance<T>().find(p)
 }
 
-public inline fun <reified T : Any> InsnBuilder.getSingleton() =
+inline fun <reified T : Any> InsnBuilder.getSingleton() =
     getstatic(internalNameOf<T>(), "INSTANCE", "L${internalNameOf<T>()};")

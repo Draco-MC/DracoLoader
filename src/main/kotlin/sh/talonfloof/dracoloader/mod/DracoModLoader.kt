@@ -12,10 +12,7 @@ import org.spongepowered.asm.launch.MixinBootstrap
 import org.spongepowered.asm.mixin.MixinEnvironment
 import org.spongepowered.asm.mixin.Mixins
 import sh.talonfloof.dracoloader.LOGGER
-import sh.talonfloof.dracoloader.api.DracoListenerManager
-import sh.talonfloof.dracoloader.api.DracoTransformer
-import sh.talonfloof.dracoloader.api.EnvironmentType
-import sh.talonfloof.dracoloader.api.ListenerSubscriber
+import sh.talonfloof.dracoloader.api.*
 import sh.talonfloof.dracoloader.isServer
 import sh.talonfloof.dracoloader.transform.DracoAccessWidening.accessWidener
 import sh.talonfloof.dracoloader.transform.DracoStandardTransformer
@@ -158,6 +155,7 @@ object DracoModLoader {
                 }
             }
         }
+        DracoStandardTransformer.applyPreInitRestrictions = false
         MixinEnvironment.CompatibilityLevel.MAX_SUPPORTED = MixinEnvironment.CompatibilityLevel.JAVA_21
         MixinBootstrap.init()
         MixinExtrasBootstrap.init()
